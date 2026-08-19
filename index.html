@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Corridor Study · Toronto Real Estate, From One Block Up — Interactive Research Edition</title>
+<meta name="description" content="An interactive location study: one North Toronto transit-corridor node, the nine-year market around it, and the supply cliff behind it.">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* page-specific: site-render figure + hotspots */
+  .render-fig { position: relative; margin: 8px 0 6px; }
+  .render-fig img { width: 100%; display: block; }
+  .hotspot { position: absolute; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff;
+    background: var(--red); cursor: pointer; box-shadow: 0 1px 8px rgba(5,28,44,.4); padding: 0; }
+  .hotspot::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 1px solid rgba(34,81,255,.5); }
+  .hotspot:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .hot-label { position: absolute; transform: translate(-50%, 0); font-family: var(--mono); font-size: 9px;
+    letter-spacing: .08em; color: var(--ink); background: rgba(255,255,255,.92); padding: 2px 7px; white-space: nowrap;
+    border-top: 2px solid var(--red); pointer-events: none; }
+  .fig-cap { font-family: var(--mono); font-size: 10px; color: var(--ink-lo); letter-spacing: .06em; margin-top: 8px; }
+  .cover-sub { max-width: 560px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ Cover ═══ -->
+<header id="cover">
+  <canvas id="cover-canvas"></canvas>
+  <canvas id="cover-canvas-x" style="display:none"></canvas>
+  <canvas id="cover-canvas-w" style="display:none"></canvas>
+  <div class="cover-inner">
+    <p class="cover-kicker">LOCATION STUDY · TORONTO RESALE &amp; SUPPLY · DATA AS OF 2026-08-19</p>
+    <h1 class="cover-title">One block, read hard:<br><span class="cover-num">the corridor after the crash</span></h1>
+    <p class="cover-sub">What a single North Toronto transit node — its podium, its slab, its courtyard — says about the market around it.</p>
+    <p class="cover-lede">In July 2026 the GTA resale market tightened for a third straight month: sales held flat while new listings fell 17.8 per cent, the steepest withdrawal of supply all year. Prices are still below last year, but the decline is losing momentum. Behind the resale tape, the construction pipeline has collapsed to a 1996 low. The closest historical analogue is the post-2017 digestion — but this cycle, with a supply cliff behind it, has no true precedent.</p>
+    <div class="cover-chips">
+      <button class="chip" data-goto="#sec-exec">Key findings</button>
+      <button class="chip" data-goto="#sec-site">The site</button>
+      <button class="chip" data-goto="#sec-market">The market</button>
+      <button class="chip" data-goto="#sec-supply">The supply cliff</button>
+      <button class="chip" data-goto="#sec-verdict">The verdict</button>
+    </div>
+    <p class="cover-anchor">Evidence graded: official &amp; industry (TRREB · CMHC · Urbanation) &gt; broker relay &gt; derived [flagged] · No ratings, no price targets</p>
+    <div class="cover-mode" id="cover-mode" aria-label="Cover artwork variant">
+      <button data-mode="rec" class="on">A · The infinite block</button>
+      <button data-mode="x">B · The exploded condominium</button>
+      <button data-mode="w">C · The blueprint</button>
+    </div>
+    <div class="scroll-hint"><span></span>SCROLL</div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══ §0 Key findings ═══ -->
+<section id="sec-exec" class="band" data-win="frame">
+  <div class="prose">
+    <p class="sec-no">§0 · Key findings</p>
+    <h2>Tightening without a recovery — yet</h2>
+    <p class="dek">The market is absorbing inventory faster than it is being replenished; prices follow balance with a lag, and balance turned first.</p>
+    <p>Three numbers carry this report. First, supply: new listings fell to <b>14,484</b> in July 2026, down <b>17.8 per cent</b> from a year earlier — the largest annual decline of 2026 — while sales held essentially flat at <b>5,995</b>. Second, balance: the sales-to-new-listings ratio reached <b>41.4 per cent</b>, up from 34.6 per cent last July, the third straight monthly tightening. Third, price: the average sale price of <b>$1,003,956</b> is still 4.5 per cent below a year ago, but the annual decline has narrowed every month since May.</p>
+    <table class="dt">
+      <thead><tr><th>Month</th><th>Sales</th><th>New listings</th><th>Average price</th><th>HPI YoY</th></tr></thead>
+      <tbody>
+        <tr><td>May 2026</td><td class="num">6,583 · +6.3% YoY</td><td class="num">17,698 · −18.9%</td><td class="num">$1,069,700</td><td class="num">−6.7%</td></tr>
+        <tr><td>Jun 2026</td><td class="num">6,770 · +9.4% YoY</td><td class="num">17,282 · −12.9%</td><td class="num">$1,058,658</td><td class="num">−5.4%</td></tr>
+        <tr class="hl"><td>Jul 2026</td><td class="num">5,995 · −0.9% YoY</td><td class="num">14,484 · −17.8%</td><td class="num">$1,003,956</td><td class="num">−4.6%</td></tr>
+      </tbody>
+    </table>
+    <p>Read in sequence, the quarter describes a market whose declines are <i>losing momentum</i> — not one that has turned. That distinction is the whole report.</p>
+  </div>
+  <div class="wide xl"><div id="band-chart" class="chart-frame"></div></div>
+  <div class="wide xl"><div id="paired-chart" class="chart-frame"></div></div>
+</section>
+
+<!-- ═══ §1 The site ═══ -->
+<section id="sec-site" class="band" data-win="site">
+  <div class="prose">
+    <p class="sec-no">§1 · The site</p>
+    <h2>Anatomy of a transit-corridor node</h2>
+    <p class="dek">An oblique aerial survey of a representative North Toronto node — the physical stock this market trades in.</p>
+    <p>The corridor node is the GTA's dominant urban form: a wide arterial with a landscaped median, a retail podium at the corner, mid-rise condominium slabs behind it, and garden-court apartment blocks filling the interstitial lots. The rendering below is a photorealistic reconstruction of one such node, produced from an oblique satellite capture; read it as a <b>type study</b>, not a specific-address appraisal. Every element visible here maps to a line in the market data that follows.</p>
+  </div>
+  <div class="wide xl">
+    <div class="render-fig" id="render-fig">
+      <img src="assets/site-render.jpg" data-remote="https://www.kimi.com/apiv2-files/sign-obj/kimi-fs%2Ffiles%2Fblob%2F33fc10af7446dcefbeda58575de4a4c14395fed33e1fe82c81e0202f0b6154cf?filename=site-render-small.jpg&sig=_Pux2gP_74ohiIQR4X-Tb4yzQhP-LkEV6uawgAdn6gU=&t=o" onerror="if(this.src!==this.dataset.remote)this.src=this.dataset.remote" alt="Photorealistic aerial rendering of a North Toronto transit-corridor node: retail plaza, domed mid-rise condominium, garden-court apartments, and a median-divided arterial road">
+      <button class="hotspot" style="left:24%;top:56%" data-t="RETAIL PODIUM" data-v="Shops at the sidewalk" data-s="Street-front retail anchors the corner; mixed-use zoning is the corridor's planning default."> </button>
+      <span class="hot-label" style="left:24%;top:60.5%">RETAIL PODIUM</span>
+      <button class="hotspot" style="left:43%;top:34%" data-t="THE SLAB + ROTUNDA" data-v="Mid-rise condominium" data-s="The sellable floor plates. City of Toronto condo average: $672,807 in July 2026 (1,054 sales) · K12."> </button>
+      <span class="hot-label" style="left:43%;top:25.5%">THE SLAB + ROTUNDA</span>
+      <button class="hotspot" style="left:66%;top:60%" data-t="GARDEN COURT" data-v="Post-war rental stock" data-s="Purpose-built rental vacancy reached 3.0% in the GTA in 2025 — first time since the pandemic · K14."> </button>
+      <span class="hot-label" style="left:66%;top:64.5%">GARDEN COURT</span>
+      <button class="hotspot" style="left:82%;top:80%" data-t="THE ARTERIAL" data-v="Median-divided corridor" data-s="Corridor land value rides on transit frequency; intensification follows the right-of-way."> </button>
+      <span class="hot-label" style="left:82%;top:84.5%">THE ARTERIAL</span>
+    </div>
+    <p class="fig-cap">FIG. 1 · PHOTOREALISTIC RECONSTRUCTION FROM AN OBLIQUE AERIAL CAPTURE · REPRESENTATIVE NODE, NOT A SPECIFIC ADDRESS · CLICK A MARKER · K17</p>
+  </div>
+  <div class="prose">
+    <div class="term-mag">
+      <article class="term" tabindex="0">
+        <h3 class="t-abbr">Podium</h3>
+        <p class="t-full">STREET-LEVEL MIXED USE</p>
+        <p class="t-gist">The retail strip is the node's amenity signal — and its zoning tell.</p>
+        <div class="t-more"><p>Corridor planning in Toronto privileges mixed-use mid-rise along arterials. A grocery-anchored podium at grade with residential above is the form the Official Plan steers toward; sites assembled along these corridors trade on that permission. The podium is also the consumer-facing evidence that the node is a walkable daily-needs cluster, the attribute that keeps both rents and resale liquidity resilient through downcycles.</p></div>
+        <p class="t-hint">Hover for the full story</p>
+      </article>
+      <article class="term" tabindex="0">
+        <h3 class="t-abbr">Slab</h3>
+        <p class="t-full">THE SELLABLE FLOOR PLATES</p>
+        <p class="t-gist">Mid-rise condominium stock — the segment carrying the deepest price declines.</p>
+        <div class="t-more"><p>Condo apartments averaged $636,323 across the GTA in July 2026, and $672,807 in the City of Toronto; the segment was down 9.5 per cent year-over-year in June, the weakest major home type. It is also the segment where the construction pipeline has collapsed hardest — GTHA condo starts fell 79 per cent in Q1-2025 — setting up a thin delivery slate by 2027–28.</p></div>
+        <p class="t-hint">Hover for the full story</p>
+      </article>
+      <article class="term" tabindex="0">
+        <h3 class="t-abbr">Court</h3>
+        <p class="t-full">GARDEN-COURT RENTAL STOCK</p>
+        <p class="t-gist">Post-war rental blocks — the quiet absorber of the region's housing demand.</p>
+        <div class="t-more"><p>Garden-court apartments are the corridor's original intensification. Their economics moved in 2025: GTA purpose-built vacancy reached 3.0 per cent, the first time at that level since the pandemic, as student and newcomer inflows slowed and condo owners shifted units into rental. Average two-bedroom purpose-built rent still grew 3.5 per cent to $2,034 — pressure beneath the softening.</p></div>
+        <p class="t-hint">Hover for the full story</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §2 The market ═══ -->
+<section id="sec-market" class="band" data-win="market">
+  <div class="prose">
+    <p class="sec-no">§2 · The market</p>
+    <h2>Nine years of corridor history in one wall chart</h2>
+    <p class="dek">Four regimes since 2017: a policy break, a pandemic boom, a rate shock, and a tariff-era trough that is now tightening.</p>
+    <p>The closest historical analogue to the present window is the 2018–19 digestion after the Fair Housing Plan — a demand shock worked off through two quiet years while supply stayed short. This cycle rhymes with it, but adds something 2018 never had: a construction pipeline that has already collapsed. 2025 closed with <b>62,433 sales</b>, the lowest annual total in the series, and an average price of <b>$1,067,968</b>, down 4.7 per cent.</p>
+  </div>
+  <div class="wide xl"><div id="timeline-chart" class="chart-frame"></div></div>
+  <div class="prose">
+    <blockquote class="quote-card">
+      <p class="q-text">With sales accounting for a larger share of listings, buyers may find there is less room to negotiate moving forward. If current trends continue, home prices could start to level off compared to last year.</p>
+      <p class="q-who">— <b>DANIEL STEINFELD, TRREB PRESIDENT</b>, 2026-08-06</p>
+      <div class="q-why"><span class="q-lab">Context</span> July 2026 release, after new listings fell 17.8 per cent year-over-year.
+      <span class="q-lab why">Why it matters</span> The board's own language shifted from defending affordability to flagging tightening — the official marker of the balance turn.</div>
+    </blockquote>
+    <div class="note-box">
+      <p><b>The rental release valve.</b> The ownership market's correction has been cushioned by a rental market that finally has slack: GTA purpose-built vacancy hit 3.0 per cent in 2025 (condo rental still tight at 1.0 per cent), and the average two-bedroom turnover rent declined to $2,547 from $2,612. Pressure remains at the bottom of the rent distribution — the cheapest quartile still posts near-1-per-cent vacancy — so the relief is real but regressive in shape. <span class="q-src">CMHC Rental Market Report, fall 2025 · K14</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ §3 The supply cliff ═══ -->
+<section id="sec-supply" class="band" data-win="supply">
+  <div class="prose">
+    <p class="sec-no">§3 · The supply cliff</p>
+    <h2>What is not being built</h2>
+    <p class="dek">Completions crest this year at a record; starts have already fallen off the cliff. The gap between the two is the next cycle's story.</p>
+    <p>As of Q1-2025, <b>69,042</b> condominium units were under construction across the GTHA — down a third in two years — and completions are projected to peak at <b>31,396</b> units in 2025 before falling to <b>17,487</b> in 2026. Starts tell the forward story: <b>497</b> condo units broke ground in Q1-2025, 79 per cent below a year earlier and 88 per cent below the ten-year average — the lowest quarterly reading since 1996. With roughly 70 per cent pre-construction sales required to finance a tower, record-low presales translate directly into missing supply two to three years out.</p>
+  </div>
+  <div class="wide xl"><div id="pipeline-chart" class="chart-frame"></div></div>
+  <div class="prose">
+    <blockquote class="quote-card">
+      <p class="q-text">The new condo market is currently working through its most challenging period to date… The magnitude of this slowdown will result in severe supply repercussions.</p>
+      <p class="q-who">— <b>SHAUN HILDEBRAND, PRESIDENT, URBANATION</b>, 2025-04-15</p>
+      <div class="q-why"><span class="q-lab">Context</span> Q1-2025 survey: starts at a 1996 low, unsold inventory at a record 24,045 units (Q2-2025).
+      <span class="q-lab why">Why it matters</span> The pipeline math in the chart above is not a projection of preference — it is already financed, or already not.</div>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ═══ §4 Verdict ═══ -->
+<section id="sec-verdict" class="band" data-win="verdict">
+  <div class="prose">
+    <p class="sec-no">§4 · The verdict</p>
+    <h2>Stabilizing — not yet a recovery</h2>
+    <p class="dek">The evidence weighs toward a market finding its floor. Two triggers would upgrade the reading; three falsifiers would break it.</p>
+    <p>For the corridor node this report started from, the implication is direct: the resale tape is tightening first, the price tape follows with a lag, and the supply cliff behind both argues that the next shortage is being built right now — by omission. What would prove stabilization real is printed prices; what would break it is a renewed flood of listings.</p>
+  </div>
+  <div class="wide xl"><div id="verdict-chart" class="chart-frame"></div></div>
+</section>
+
+<!-- ═══ Sources ═══ -->
+<footer id="sec-sources">
+  <div class="prose">
+    <p class="sec-no">Sources &amp; method</p>
+    <h2>Method, discipline, and sources</h2>
+    <div class="note-box">
+      <p><b>Evidence grading.</b> Official and industry sources (TRREB, CMHC, Urbanation, Ontario) outrank broker and data-vendor relays; derived figures are flagged in place. Where TRREB vintages differ (the 2024 boundary revision restated history), this report uses the figures as originally reported and says so.</p>
+      <p><b>Source classes, each dated.</b> <span class="src-cat industry">Industry &amp; official</span>
+        <span class="src-cat broker">Broker / data-vendor relay</span> <span class="src-cat kimi">Research compilation</span></p>
+      <p><b>Measurement discipline.</b> The sales-to-new-listings ratio and months-of-supply are vendor calculations from TRREB monthly totals (K11). Projections (2025–26 completions) are drawn hollow wherever they appear. The site imagery is a photorealistic reconstruction of a representative node — a type study, not a specific-address appraisal.</p>
+    </div>
+  </div>
+  <div class="wide xl">
+    <div style="margin-top:26px">
+      <p class="chart-title">Anchor register · K1–K17</p>
+      <p class="chart-sub">EVERY NUMBER THE REPORT LEANS ON, WITH ITS DATED SOURCE</p>
+    </div>
+    <div id="source-list"></div>
+  </div>
+  <div class="prose">
+    <p class="colophon">Interactive research edition · Compiled 2026-08-19 · No investment advice<br>The Corridor Study · Toronto real estate, from one block up</p>
+  </div>
+</footer>
+
+</main>
+
+<aside id="dash-rail" aria-label="Market dashboard"><canvas id="dash-canvas"></canvas></aside>
+<div id="drill-card" hidden></div>
+
+<script src="vendor/d3.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/cover.js"></script>
+<script src="js/cover-exploded.js"></script>
+<script src="js/cover-wire.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/chart-band.js"></script>
+<script src="js/chart-paired.js"></script>
+<script src="js/chart-timeline.js"></script>
+<script src="js/chart-pipeline.js"></script>
+<script src="js/chart-verdict.js"></script>
+<script src="js/sources.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
